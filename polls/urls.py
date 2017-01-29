@@ -8,5 +8,4 @@ urlpatterns = [
     url(r'^$', views.Login, name='Login'),
     url(r'^register/$', views.Register, name='Register'),
 
-
 ]

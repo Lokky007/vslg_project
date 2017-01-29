@@ -6,7 +6,7 @@ from django.contrib.auth import (
     login,
     logout
 )
-
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserLoginForm
 
 # Create your views here.
@@ -26,6 +26,13 @@ def Login(request):
 def Register(request):
     form = UserRegisterForm(request.POST or None)
     if form.is_valid():
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("passsword")
+        username = form.cleaned_data.get("user_login")
+        password = form.cleaned_data.get("user_pass")
+        fname = form.cleaned_data.get("user_name")
+        lname = form.cleaned_data.get("user_last_name")
+        email = form.cleaned_data.get("user_email")
+
+        user = User.objects.create_user(username, email, password, last_name=lname, first_name=fname)
+        return render(request, 'polls/registration/success.html', {"username": username})
+
     return render(request, 'polls/registration/register.html', {"form": form})
