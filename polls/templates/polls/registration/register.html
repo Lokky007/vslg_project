@@ -1,7 +1,7 @@
 <!-- register.html -->
 {% extends "polls/base.html" %}
 {% block title %}Registrace nového uživatele{% endblock %}
-{% block head %}Registrace noveho uzivatele{% endblock %}
+{% block head %}Registrace nového uživatele{% endblock %}
 
 {% if form.errors %}
 {% endif %}
@@ -10,6 +10,6 @@
     <form method="post" action=".">{% csrf_token %}
                     {{ form }}
         <button type="submit" value="Register">Potvrdit</button>
-        <button type="button" onclick="window.location.href='/polls' ">Zpet</button>
+        <button type="button" onclick="window.location.href='/polls' ">Zpět</button>
     </form>
 {% endblock %}

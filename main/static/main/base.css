@@ -46,11 +46,12 @@ body :-ms-input-placeholder {
   height: 100%;
 
 }
-.wrapper.form-success .container h1 {
+.wrapper.form-success .container_second h1 {
   -webkit-transform: translateY(85px);
           transform: translateY(85px);
 }
 .container_second {
+  padding-top:100px;
   max-width: 600px;
   margin: 0 auto;
   padding: 15% 0;
@@ -122,4 +123,7 @@ button:hover {
     -webkit-transform: translateY(-700px) rotate(600deg);
             transform: translateY(-700px) rotate(600deg);
   }
+}
+.width140{
+  width: 140px;
 }

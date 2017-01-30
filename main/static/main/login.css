@@ -50,14 +50,14 @@ body :-ms-input-placeholder {
   -webkit-transform: translateY(85px);
           transform: translateY(85px);
 }
-.container_second {
+.container {
   max-width: 600px;
   margin: 0 auto;
   padding: 15% 0;
   height: 400px;
   text-align: center;
 }
-.container_second h1 {
+.container h1 {
   font-size: 40px;
   font-weight: 200;
 }
@@ -122,4 +122,10 @@ button:hover {
     -webkit-transform: translateY(-700px) rotate(600deg);
             transform: translateY(-700px) rotate(600deg);
   }
+}
+
+form.nonfield{
+  padding: 10px;
+    color: red;
+    font: message-box;
 }

@@ -1,0 +1,25 @@
+<!-- base.html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load staticfiles %}
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href=" {% static 'main/base.css' %}">
+    <link rel="stylesheet" type="text/css" href=" {% static 'bootstrap/css/bootstrap.min.css'%}">
+
+</head>
+<body>
+    <div class="wrapper ">
+        <div class="container">
+        <ul class="nav nav-pills">
+          <li role="presentation" ><a href="/main/">Přehled publikací</a></li>
+          <li role="presentation"><a href="/main/insert/">Vlozit</a></li>
+          <li role="presentation"><a href="/main/overview/">Moje správa</a></li>
+          <li role="presentation"><a href="/polls/logout/">Odhlasit</a></li>
+        </ul>
+            <h1>{% block head %}{% endblock %}</h1>
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>

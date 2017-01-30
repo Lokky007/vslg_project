@@ -9,20 +9,21 @@ from django.contrib.auth import (
 from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserLoginForm
 
-# Create your views here.
-
+# Login - check and redirect
 def Login(request):
     loginForm = UserLoginForm(request.POST or None)
     if loginForm.is_valid():
         username = loginForm.cleaned_data.get("username")
         password = loginForm.cleaned_data.get("passsword")
         user = authenticate(username=username, password=password)
+        print user, username, password
         login(request, user)
         if request.user.is_authenticated():
             return redirect('/main/')
 
     return render(request, 'polls/registration/login.html', {"loginForm": loginForm})
 
+# Register - check data and if correct, redirect.
 def Register(request):
     form = UserRegisterForm(request.POST or None)
     if form.is_valid():
@@ -36,3 +37,8 @@ def Register(request):
         return render(request, 'polls/registration/success.html', {"username": username})
 
     return render(request, 'polls/registration/register.html', {"form": form})
+
+# Logout function for destroy relation
+def Logout (request):
+    logout(request)
+    return render(request, 'polls/registration/logout.html')
