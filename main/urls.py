@@ -7,6 +7,7 @@ app_name = 'main'
 urlpatterns = [
     url(r'^$', views.Main, name='Main'),
     url(r'^insert/$', views.NewFile, name='New File'),
-    url(r'^overview/$', views.Overview, name='New File'),
+    url(r'^insert/successfully/$', views.File_saved, name='File saved'),
+    url(r'^overview/$', views.Overview, name='My publication'),
 
 ]

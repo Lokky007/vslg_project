@@ -132,3 +132,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 LOGIN_URL = '/polls/'
+
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "mysite/main/publications/")
