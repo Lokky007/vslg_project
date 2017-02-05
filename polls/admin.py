@@ -1,17 +1,14 @@
 from django.contrib import admin
-from .models import Question, Choice
+from main.models import file_record
 
-
-class ChoiceInline(admin.StackedInline):
-    model = Choice
-    extra = 1
-
-class QuestionAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': ['question_text']}),
-                 ('Date Information', {'fields':['pub_date'],
+class FilesAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': ['file_name']}),
+                 ('Date Information', {'fields': ['date'],
                  'classes': ['collapse']}),
                  ]
-    inlines = [ChoiceInline]
+
+class MyAdminSite(admin.ModelAdmin):
+    site_header = 'Monty Python administration'
 
 # Register your models here.
-admin.site.register(Question,QuestionAdmin);
+admin.site.register(file_record, FilesAdmin);

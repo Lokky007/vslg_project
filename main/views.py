@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import UploadFileForm
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-
+from main.models import file_record
+import os
+from django.contrib.auth.models import User
 
 from django.contrib.auth import (
     authenticate,
@@ -23,8 +26,18 @@ def NewFile(request):
             print("uspecne ulozeno")
             if form.is_valid():
                 filename = form.cleaned_data.get("title")
-                handle_uploaded_file(request.FILES['file'], filename)
-                return HttpResponseRedirect('/success/url/')
+
+                username = request.user.username
+                dir_path = settings.MEDIA_ROOT + username + "/"
+                file_path = dir_path + filename
+
+                file_status = Handle_uploaded_file(request, request.FILES['file'], file_path, dir_path)
+                if file_status:
+                    Save_file_record(request, filename, file_path)
+                    return HttpResponseRedirect('/main/insert/successfully/')
+                else:
+                    error = 'Uložení souboru se nezdařilo. Kontaktujte prosím administrátora'
+                    return render(request, 'main/insert_file.html', {'form': form, 'error': error})
 
         else:
             form = UploadFileForm()
@@ -39,9 +52,27 @@ def File_saved(request):
 
 
 
+#
+# additional function
+#
+def Handle_uploaded_file(request, file, file_path, dir_path):
 
-def handle_uploaded_file(f, filename):
-    print (settings.MEDIA_ROOT + filename)
-    with open(settings.MEDIA_ROOT + filename, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+    try:
+        # if folder not exist, create it
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        # save file
+        with open(file_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+                return True
+    except:
+        return False
+
+
+def Save_file_record(request, filename, file_path):
+    user_id = User.objects.get(id=request.user.id)
+
+    record = file_record(file_name=filename, owner=user_id, path=file_path)
+    record.save()
