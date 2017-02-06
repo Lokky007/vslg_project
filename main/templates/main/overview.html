@@ -4,5 +4,12 @@
 {% block head %}Moje soubory{% endblock %}
 {% block content %}
 
+   {% for item in results %}
+
+        {{ item.file_name }}
+        {{ item.date }}
+        {{ item.owner }}
+        <br>
+    {% endfor %}
 
 {% endblock %}

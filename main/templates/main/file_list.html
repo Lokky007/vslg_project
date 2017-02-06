@@ -3,6 +3,15 @@
 {% block title %}Seznam publikací{% endblock %}
 {% block head %}Seznam publikací{% endblock %}
 {% block content %}
-asd
+
+    {% for item in results %}
+
+        {{ item.file_name }}
+        {{ item.path }}
+        <a href="{{ item.path }}">Stáhnout</a>
+        {{ item.date }}
+        {{ item.owner }}
+        <br>
+    {% endfor %}
 
 {% endblock %}

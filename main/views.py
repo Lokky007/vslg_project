@@ -18,7 +18,8 @@ from django.contrib.auth import (
 
 #@login_required
 def Main(request):
-    return render(request, 'main/file_list.html', {})
+    results = file_record.objects.all()
+    return render(request, 'main/file_list.html', {'results': results})
 
 def NewFile(request):
         if request.method == 'POST':
@@ -29,7 +30,7 @@ def NewFile(request):
 
                 username = request.user.username
                 dir_path = settings.MEDIA_ROOT + username + "/"
-                file_path = dir_path + filename
+                file_path = dir_path + request.FILES['file'].name
 
                 file_status = Handle_uploaded_file(request, request.FILES['file'], file_path, dir_path)
                 if file_status:
