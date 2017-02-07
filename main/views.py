@@ -46,12 +46,24 @@ def NewFile(request):
         return render(request, 'main/insert_file.html', {'form': form})
 
 def Overview(request):
-    return render(request, 'main/overview.html', {})
+    results = file_record.objects.filter(owner=request.user.id)
+    return render(request, 'main/overview.html', {'results': results})
 
 def File_saved(request):
     return render(request, 'main/file_saved.html', {})
 
+def Download(request):
+    """
 
+    :param request:
+    :return:
+    filename = "/home/stackoverflow-addict/private-folder(not-porn)/image.jpg"
+    wrapper = FileWrapper(file(filename))
+    response = HttpResponse(wrapper, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
+    response['Content-Length'] = os.path.getsize(filename)
+    return response
+    """
 
 #
 # additional function

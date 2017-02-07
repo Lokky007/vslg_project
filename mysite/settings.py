@@ -135,3 +135,7 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/polls/'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "mysite/main/publications/")
+
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(BASE_DIR), "mysite/main/publications/"),
+]

@@ -1,5 +1,7 @@
 <!-- login.html -->
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Seznam publikací{% endblock %}
 {% block head %}Seznam publikací{% endblock %}
 {% block content %}
@@ -7,8 +9,7 @@
     {% for item in results %}
 
         {{ item.file_name }}
-        {{ item.path }}
-        <a href="{{ item.path }}">Stáhnout</a>
+        <a href='{% static item.path %}' download="filename" >Stáhnout</a>
         {{ item.date }}
         {{ item.owner }}
         <br>
