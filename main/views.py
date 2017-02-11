@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import UploadFileForm
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db import transaction
 from main.models import file_record
 import os
 from django.contrib.auth.models import User
@@ -49,21 +50,27 @@ def Overview(request):
     results = file_record.objects.filter(owner=request.user.id)
     return render(request, 'main/overview.html', {'results': results})
 
+# page only for visualisation of correct save
 def File_saved(request):
     return render(request, 'main/file_saved.html', {})
 
-def Download(request):
-    """
+def Delete_file(request, file_id, result=""):
 
-    :param request:
-    :return:
-    filename = "/home/stackoverflow-addict/private-folder(not-porn)/image.jpg"
-    wrapper = FileWrapper(file(filename))
-    response = HttpResponse(wrapper, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
-    response['Content-Length'] = os.path.getsize(filename)
-    return response
-    """
+    enabled_delete = file_record.objects.filter(owner=request.user.id, id=file_id).count()
+    record = file_record.objects.get(id=file_id)
+    file_exist = os.path.isfile(record.path)
+    print file_exist
+    # if select found only one record for delete with condition id file and id user-> continue
+    if enabled_delete == 1 and file_exist:
+        os.remove(record.path)
+        record.delete()
+        result = "Smazání záznamu proběhlo úspěšně."
+
+    else:
+        result = "Smazání záznamu se nezdařilo. Kontaktujte administrátora"
+
+    return render(request, 'main/delete.html', {'result': result})
+
 
 #
 # additional function

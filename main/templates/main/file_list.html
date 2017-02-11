@@ -9,7 +9,7 @@
     {% for item in results %}
 
         {{ item.file_name }}
-        <a href='{% static item.path %}' download="filename" >Stáhnout</a>
+        <a href='{{ item.path }}' download="{{ item.file_name }}" >Stáhnout</a>
         {{ item.date }}
         {{ item.owner }}
         <br>

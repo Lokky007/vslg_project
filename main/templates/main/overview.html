@@ -9,6 +9,8 @@
         {{ item.file_name }}
         {{ item.date }}
         {{ item.owner }}
+
+        <a href="/main/overview/delete/{{ item.id }}" >X</a>
         <br>
     {% endfor %}
 
