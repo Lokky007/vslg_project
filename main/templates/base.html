@@ -12,14 +12,22 @@
 <body>
     <div class="wrapper ">
         <div class="container">
-        <ul class="nav nav-pills">
-          <li role="presentation" ><a href="/main/">Přehled publikací</a></li>
-          <li role="presentation"><a href="/main/insert/">Vložit</a></li>
-          <li role="presentation"><a href="/main/overview/">Moje správa</a></li>
-          <li role="presentation"><a href="/polls/logout/">Odhlásit</a></li>
-        </ul>
-            <h1>{% block head %}{% endblock %}</h1>
-            {% block content %}{% endblock %}
+            <ul class="nav nav-pills">
+              <li role="presentation" ><a href="/main/">Přehled publikací</a></li>
+              <li role="presentation"><a href="/main/insert/">Vložit</a></li>
+              <li role="presentation"><a href="/main/overview/">Moje správa</a></li>
+              <li role="presentation"><a href="/polls/logout/">Odhlásit</a></li>
+            </ul>
+
+            <div class="center_container">
+                 <div class="center_container_title">
+                    <h1>{% block head %}{% endblock %}</h1>
+                 </div>
+
+                 <div class="center_container_content">
+                    {% block content %}{% endblock %}
+                 </div>
+            </div>
         </div>
     </div>
 </body>

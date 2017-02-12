@@ -6,13 +6,22 @@
 {% block head %}Seznam publikací{% endblock %}
 {% block content %}
 
-    {% for item in results %}
+    <div class="file_list_labels">
+        <div class="file_list_name">Název</div>
+        <div class="file_list_download">Stažení</div>
+        <div class="file_list_date">Datum</div>
+        <div class="file_list_uploadedBy">Autor</div>
+    </div>
 
-        {{ item.file_name }}
-        <a href='{{ item.path }}' download="{{ item.file_name }}" >Stáhnout</a>
-        {{ item.date }}
-        {{ item.owner }}
-        <br>
-    {% endfor %}
+        {% for item in results %}
+
+            <div class="file_list_name">    {{ item.file_name }} </div>
+            <div class="file_list_download"><a href='{{ item.path }}' download="{{ item.file_name }}" >Stáhnout</a></div>
+            <div class="file_list_date">{{ item.date }}</div>
+            <div class="file_list_uploadedBy">{{ item.owner }}</div>
+            <br>
+
+        {% endfor %}
+
 
 {% endblock %}

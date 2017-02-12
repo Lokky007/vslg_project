@@ -127,3 +127,40 @@ button:hover {
 .width140{
   width: 140px;
 }
+
+/* css for base template */
+.center_container_title{
+  font-family: 'Source Sans Pro', sans-serif;
+  color: white;
+  margin-left: 20px;
+}
+
+.center_container_content{
+  color: white;
+  border: 2px solid;
+  border-radius: 25px;
+  border-color: white;
+  padding: 15px;
+}
+
+/* file list */
+.file_list_labels{
+  margin-bottom: 30px;
+}
+
+.file_list_name {
+  width: 50%;
+  float: left;
+}
+.file_list_download{
+  width: 10%;
+  float: left;
+}
+.file_list_date{
+  width: 20%;
+  float: left;
+}
+.file_list_uploadedBy{
+  width: 15%;
+  float: left;
+}

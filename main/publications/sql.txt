@@ -1,0 +1,203 @@
+CREATE TABLE IF NOT EXISTS `mydb`.`studenti` (
+  `id_studenti` INT NOT NULL,
+  `jmeno` VARCHAR(45) NOT NULL,
+  `prijmeni` VARCHAR(45) NOT NULL,
+  `sin` INT(6) NULL,
+  `obor` VARCHAR(3) NOT NULL,
+  UNIQUE INDEX `id_studenti_UNIQUE` (`id_studenti` ASC),
+  PRIMARY KEY (`id_studenti`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`obor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`obor` (
+  `id_obor` INT NOT NULL,
+  `nazev` VARCHAR(255) NULL,
+  `zkratka` VARCHAR(3) NULL,
+  PRIMARY KEY (`id_obor`),
+  UNIQUE INDEX `id_obor_UNIQUE` (`id_obor` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`hodnoceni`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`hodnoceni` (
+  `id_hodnoceni` INT NOT NULL,
+  `znamka` TINYINT NOT NULL,
+  PRIMARY KEY (`id_hodnoceni`),
+  UNIQUE INDEX `id_hodnoceni_UNIQUE` (`id_hodnoceni` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`pedagog`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`pedagog` (
+  `id_pedagog` INT NOT NULL,
+  `jmeno` VARCHAR(100) NULL,
+  `prijmen` VARCHAR(100) NULL,
+  `titul` INT NULL,
+  PRIMARY KEY (`id_pedagog`),
+  UNIQUE INDEX `id_pedagog_UNIQUE` (`id_pedagog` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`kvalifikacni_prace`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`kvalifikacni_prace` (
+  `id_kvalifikacni_prace` INT NOT NULL,
+  `AR` INT(4) NOT NULL,
+  `nazev` VARCHAR(255) NULL,
+  `nazevA` VARCHAR(255) NULL,
+  `Cil` TEXT NULL,
+  `Poznamka` TEXT NULL,
+  `Obor` INT(2) NULL,
+  `Vedouci` INT(4) NULL,
+  `Student` INT(6) NULL,
+  `Oponent` INT(4) NULL,
+  `Osnova` TEXT(1024) NULL,
+  `Literatura` TEXT(1024) NULL,
+  `Datum` DATE NULL,
+  `Anotace` TEXT(2048) NULL,
+  `AnotaceA` TEXT(2048) NULL,
+  `Slova` TEXT(256) NULL,
+  `SlovaA` TEXT(256) NULL,
+  `Prace` VARCHAR(255) NULL,
+  `PosudekV` VARCHAR(255) NULL,
+  `HodnoceniV` INT(2) NULL,
+  `PosudekO` VARCHAR(255) NULL,
+  `HodnoceniO` INT(2) NULL,
+  `Zmena` INT(6) NULL,
+  `ZmenaD` DATE NULL,
+  `studenti_id_studenti` INT NOT NULL,
+  `obor_id_obor` INT NOT NULL,
+  `hodnoceni_id_hodnoceni` INT NOT NULL,
+  `pedagog_id_pedagog` INT NOT NULL,
+  PRIMARY KEY (`id_kvalifikacni_prace`, `pedagog_id_pedagog`),
+  UNIQUE INDEX `id_kvalifikacni_prace_UNIQUE` (`id_kvalifikacni_prace` ASC),
+  INDEX `fk_kvalifikacni_prace_studenti1_idx` (`studenti_id_studenti` ASC),
+  INDEX `fk_kvalifikacni_prace_obor1_idx` (`obor_id_obor` ASC),
+  INDEX `fk_kvalifikacni_prace_hodnoceni1_idx` (`hodnoceni_id_hodnoceni` ASC),
+  INDEX `fk_kvalifikacni_prace_pedagog1_idx` (`pedagog_id_pedagog` ASC),
+  CONSTRAINT `fk_kvalifikacni_prace_studenti1`
+    FOREIGN KEY (`studenti_id_studenti`)
+    REFERENCES `mydb`.`studenti` (`id_studenti`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_kvalifikacni_prace_obor1`
+    FOREIGN KEY (`obor_id_obor`)
+    REFERENCES `mydb`.`obor` (`id_obor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_kvalifikacni_prace_hodnoceni1`
+    FOREIGN KEY (`hodnoceni_id_hodnoceni`)
+    REFERENCES `mydb`.`hodnoceni` (`id_hodnoceni`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_kvalifikacni_prace_pedagog1`
+    FOREIGN KEY (`pedagog_id_pedagog`)
+    REFERENCES `mydb`.`pedagog` (`id_pedagog`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`titul`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`titul` (
+  `id_titul` INT NOT NULL,
+  `nazev` VARCHAR(10) NULL,
+  PRIMARY KEY (`id_titul`),
+  UNIQUE INDEX `id_titul_UNIQUE` (`id_titul` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`titul_has_pedagog`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`titul_has_pedagog` (
+  `titul_id_titul` INT NOT NULL,
+  `pedagog_id_pedagog` INT NOT NULL,
+  PRIMARY KEY (`titul_id_titul`, `pedagog_id_pedagog`),
+  INDEX `fk_titul_has_pedagog_pedagog1_idx` (`pedagog_id_pedagog` ASC),
+  INDEX `fk_titul_has_pedagog_titul1_idx` (`titul_id_titul` ASC),
+  CONSTRAINT `fk_titul_has_pedagog_titul1`
+    FOREIGN KEY (`titul_id_titul`)
+    REFERENCES `mydb`.`titul` (`id_titul`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_titul_has_pedagog_pedagog1`
+    FOREIGN KEY (`pedagog_id_pedagog`)
+    REFERENCES `mydb`.`pedagog` (`id_pedagog`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`studenti_has_titul`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`studenti_has_titul` (
+  `studenti_id_studenti` INT NOT NULL,
+  `titul_id_titul` INT NOT NULL,
+  PRIMARY KEY (`studenti_id_studenti`, `titul_id_titul`),
+  INDEX `fk_studenti_has_titul_titul1_idx` (`titul_id_titul` ASC),
+  INDEX `fk_studenti_has_titul_studenti1_idx` (`studenti_id_studenti` ASC),
+  CONSTRAINT `fk_studenti_has_titul_studenti1`
+    FOREIGN KEY (`studenti_id_studenti`)
+    REFERENCES `mydb`.`studenti` (`id_studenti`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_studenti_has_titul_titul1`
+    FOREIGN KEY (`titul_id_titul`)
+    REFERENCES `mydb`.`titul` (`id_titul`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`pedagog_has_kvalifikacni_prace`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`pedagog_has_kvalifikacni_prace` (
+  `pedagog_id_pedagog` INT NOT NULL,
+  `kvalifikacni_prace_id_kvalifikacni_prace` INT NOT NULL,
+  PRIMARY KEY (`pedagog_id_pedagog`, `kvalifikacni_prace_id_kvalifikacni_prace`),
+  INDEX `fk_pedagog_has_kvalifikacni_prace_kvalifikacni_prace1_idx` (`kvalifikacni_prace_id_kvalifikacni_prace` ASC),
+  INDEX `fk_pedagog_has_kvalifikacni_prace_pedagog1_idx` (`pedagog_id_pedagog` ASC),
+  CONSTRAINT `fk_pedagog_has_kvalifikacni_prace_pedagog1`
+    FOREIGN KEY (`pedagog_id_pedagog`)
+    REFERENCES `mydb`.`pedagog` (`id_pedagog`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_pedagog_has_kvalifikacni_prace_kvalifikacni_prace1`
+    FOREIGN KEY (`kvalifikacni_prace_id_kvalifikacni_prace`)
+    REFERENCES `mydb`.`kvalifikacni_prace` (`id_kvalifikacni_prace`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`nabizene_prace`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`nabizene_prace` (
+  `id_nabizene_prace` INT NOT NULL,
+  `nazev` VARCHAR(255) NOT NULL,
+  `stav` TINYINT NULL DEFAULT 0,
+  `kvalifikacni_prace_id_kvalifikacni_prace` INT NOT NULL,
+  PRIMARY KEY (`id_nabizene_prace`),
+  UNIQUE INDEX `id_idnabizene_prace_UNIQUE` (`id_nabizene_prace` ASC),
+  UNIQUE INDEX `nazev_UNIQUE` (`nazev` ASC),
+  INDEX `fk_nabizene_prace_kvalifikacni_prace1_idx` (`kvalifikacni_prace_id_kvalifikacni_prace` ASC),
+  CONSTRAINT `fk_nabizene_prace_kvalifikacni_prace1`
+    FOREIGN KEY (`kvalifikacni_prace_id_kvalifikacni_prace`)
+    REFERENCES `mydb`.`kvalifikacni_prace` (`id_kvalifikacni_prace`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
