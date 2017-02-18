@@ -1,0 +1,24 @@
+<!-- settings.html -->
+{% extends "base.html" %}
+
+{% block title %}Nastavení účtu{% endblock %}
+{% block head %}Nastavení účtu{% endblock %}
+
+{% if form.errors %}
+{% endif %}
+{{ message }}
+
+{% block content %}
+
+    <u>Nastavení nového hesla</u>
+
+     <form class="form" action="" method="post"> {% csrf_token %}
+
+        {{ form }}
+
+         <input type="submit" value="Uložit" />
+
+    </form>
+
+
+{% endblock %}

@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^insert/successfully/$', views.File_saved, name='File saved'),
     url(r'^overview/$', views.Overview, name='My publication'),
     url(r'^overview/delete/(?P<file_id>\d+)/$', views.Delete_file, name='Delete file'),
+    url(r'^settings/$', views.Settings, name='Account settings'),
 
 ]

@@ -2,7 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import UploadFileForm
+from .forms import UploadFileForm, PasswordSetting
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db import transaction
@@ -17,15 +17,16 @@ from django.contrib.auth import (
     logout
 )
 
+
 #@login_required
 def Main(request):
     results = file_record.objects.all()
     return render(request, 'main/file_list.html', {'results': results})
 
+
 def NewFile(request):
         if request.method == 'POST':
             form = UploadFileForm(request.POST, request.FILES)
-            print("uspecne ulozeno")
             if form.is_valid():
                 filename = form.cleaned_data.get("title")
 
@@ -43,23 +44,51 @@ def NewFile(request):
 
         else:
             form = UploadFileForm()
-            print("presmerovani na insert file")
         return render(request, 'main/insert_file.html', {'form': form})
+
 
 def Overview(request):
     results = file_record.objects.filter(owner=request.user.id)
     return render(request, 'main/overview.html', {'results': results})
 
+
+# Account settings
+def Settings(request):
+
+    user = User.objects.get(username=request.user.username)
+
+    if request.method == 'POST':
+        form = PasswordSetting(data=request.POST, user=user)
+
+        if form.is_valid():
+            new_password = form.cleaned_data.get("new_password")
+
+            user.set_password(new_password)
+            user.save()
+
+            message = 'Heslo bylo změněno'
+
+        else:
+            message = 'Heslo nebylo ulozeno'
+
+        return render(request, 'main/settings.html', {'form': form, 'message': message})
+
+    else:
+        form = PasswordSetting(user=user)
+
+    return render(request, 'main/settings.html', {'form': form})
+
+
 # page only for visualisation of correct save
 def File_saved(request):
     return render(request, 'main/file_saved.html', {})
+
 
 def Delete_file(request, file_id, result=""):
 
     enabled_delete = file_record.objects.filter(owner=request.user.id, id=file_id).count()
     record = file_record.objects.get(id=file_id)
     file_exist = os.path.isfile(record.path)
-    print file_exist
     # if select found only one record for delete with condition id file and id user-> continue
     if enabled_delete == 1 and file_exist:
         os.remove(record.path)
