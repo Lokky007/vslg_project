@@ -10,8 +10,22 @@
         {{ item.date }}
         {{ item.owner }}
 
-        <a href="/main/overview/delete/{{ item.id }}" >X</a>
+        <input type="submit" class="deleteButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Smazat" />
         <br>
     {% endfor %}
+
+    <script>
+        function confirmDelete(url) {
+           var result = confirm("Opravdu chcete smazat zvolený soubor?!");
+            if (result == true) {
+                 window.location = url;
+            }
+            else{
+
+                console.log(url)
+                return false
+            }
+        }
+    </script>
 
 {% endblock %}

@@ -28,9 +28,9 @@ class PasswordSetting(forms.Form):
         new_password = self.cleaned_data.get("new_password")
         repeat_new_password = self.cleaned_data.get("repeat_new_password")
 
+        if len(new_password) <= 5:
+            raise forms.ValidationError("Heslo musí být delší 5 znaků")
         if new_password != repeat_new_password:
             raise forms.ValidationError("Hesla nejsou stejná")
         if not self.user.check_password(original_password):
             raise forms.ValidationError("Původní heslo nesouhlasí")
-        if (len(new_password ) <= 5):
-            raise forms.ValidationError("Heslo musí být delší 5 znaků")
