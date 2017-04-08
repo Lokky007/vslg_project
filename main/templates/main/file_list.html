@@ -6,22 +6,50 @@
 {% block head %}Seznam publikací{% endblock %}
 {% block content %}
 
+
     <div class="file_list_labels">
-        <div class="file_list_name">Název</div>
-        <div class="file_list_download">Stažení</div>
+        <img class="file_list_button_search" src="../../static/search.png" alt="Search">
+        <div class="file_list_name_main">Název</div>
+        <div class="file_list_download">Odkaz</div>
         <div class="file_list_date">Datum</div>
         <div class="file_list_uploadedBy">Autor</div>
     </div>
 
+    <div class="searchForm" style="display: none">
+           <form class="form-search" action="" method="post"> {% csrf_token %}
+
+                {{ form }}
+                <input type="submit"  style="display: none" value="ok" />
+
+
+            </form>
+    </div>
+
         {% for item in results %}
+        <div class="file_row">
 
             <div class="file_list_name">    {{ item.file_name }} </div>
-            <div class="file_list_download"><a href='{{ item.path }}' download="{{ item.file_name }}" >Stáhnout</a></div>
+
+            {% if item.path %}
+                <div class="file_list_download"><a href='{{ item.path }}' download="{{ item.file_name }}" >Dokument</a></div>
+            {% else %}
+                <div class="file_list_download"><a href='{{ item.link }}' target="_blank">Odkaz</a></div>
+            {% endif %}
+
             <div class="file_list_date">{{ item.date }}</div>
-            <div class="file_list_uploadedBy">{{ item.owner }}</div>
+            <div class="file_list_uploadedBy">{{ item.owner.first_name }} {{ item.owner.last_name }}</div>
             <br>
+        </div>
 
         {% endfor %}
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".file_list_button_search").click(function(){
+                $(".searchForm").slideToggle("slow");
+            });
+        });
+    </script>
 
 {% endblock %}

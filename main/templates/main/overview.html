@@ -1,28 +1,50 @@
 <!-- overview.html -->
 {% extends "base.html" %}
-{% block title %}Moje soubory{% endblock %}
-{% block head %}Moje soubory{% endblock %}
+{% block title %}Moje publikace{% endblock %}
+{% block head %}Moje publikace{% endblock %}
 {% block content %}
 
    {% for item in results %}
+        <div class="file_row">
 
-        {{ item.file_name }}
-        {{ item.date }}
-        {{ item.owner }}
+            <div class="overview_name"> {{ item.file_name }} </div>
 
-        <input type="submit" class="deleteButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Smazat" />
-        <br>
+           <div class="overview_status">
+            {% if item.enable_post == True %}
+                <div class="file_status_public">Veřejné</div>
+           {% else %}
+                <div class="file_status_private">Soukromé</div>
+           {% endif %}
+           </div>
+
+            <div class="overview_date"> {{ item.date }} </div>
+
+           <div class="overview_buttons">
+            <input type="submit" class="changeButton" onclick="confirmChangeStatus('/main/overview/changeStatus/{{ item.id }}')" value="Změnit stav" />
+            <input type="submit" class="editButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Upravit" />
+            <input type="submit" class="deleteButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Smazat" />
+           </div>
+        </div>
+
     {% endfor %}
 
     <script>
         function confirmDelete(url) {
-           var result = confirm("Opravdu chcete smazat zvolený soubor?!!");
+           var result = confirm("Opravdu chcete smazat zvolený soubor?");
             if (result == true) {
                  window.location = url;
             }
             else{
+                return false
+            }
+        }
 
-                console.log(url)
+           function confirmChangeStatus(url) {
+           var result = confirm("Opravdu chcete změnit stav souboru?");
+            if (result == true) {
+                 window.location = url;
+            }
+            else{
                 return false
             }
         }

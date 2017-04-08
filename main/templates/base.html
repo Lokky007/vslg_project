@@ -12,13 +12,17 @@
 <body>
     <div class="wrapper ">
         <div class="container">
-            <ul class="nav nav-pills">
-              <li role="presentation" ><a href="/main/">Přehled publikací</a></li>
-              <li role="presentation"><a href="/main/insert/">Vložit soubor</a></li>
-              <li role="presentation"><a href="/main/overview/">Moje správa</a></li>
-              <li role="presentation"><a href="/main/settings/">Nastavení účtu</a></li>
-              <li role="presentation"><a href="/polls/logout/">Odhlásit</a></li>
-            </ul>
+            <div class="menu_wrapper">
+                <ul class="nav nav-pills">
+                  <li role="presentation" ><a href="/main/">Přehled publikací</a></li>
+                  <li role="presentation"><a href="/main/insert/">Vložit soubor</a></li>
+                  <li role="presentation"><a href="/main/insert/link/">Vložit odkaz</a></li>
+                  <li role="presentation"><a href="/main/overview/">Správa publikací</a></li>
+                  <li role="presentation"><a href="/main/settings/">Nastavení účtu</a></li>
+                  <li role="presentation"><a  href="/polls/logout/">Odhlásit</a></li>
+                  <li role="presentation" class="loggedUser">Přihlášen jako <b>{{request.user.username}}</b></li>
+                </ul>
+            </div>
 
             <div class="center_container">
                  <div class="center_container_title">

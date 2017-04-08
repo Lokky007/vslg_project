@@ -10,11 +10,11 @@
 
 {% block content %}
 
-    <u>Nastavení nového hesla</u>
+    <div class="file_list_labels">Nastavení nového hesla</div>
 
      <form class="form" action="" method="post"> {% csrf_token %}
 
-        {{ form }}
+        {{ form.as_p }}
 
          <input type="submit" value="Uložit" />
 
