@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class UserRegisterForm(forms.Form):
-    user_login = forms.CharField(label='Název úctu', max_length=50)
+    user_login = forms.CharField(label='Název úctu (min. 5 znaku)', max_length=50)
     user_pass = forms.CharField(label='Heslo (min. 5 znaku)', max_length=20, widget=forms.PasswordInput)
     user_pass_check = forms.CharField(label='Opakujte heslo', max_length=20, widget=forms.PasswordInput)
     user_name = forms.CharField(label='Jméno', max_length=50)
@@ -28,6 +28,9 @@ class UserRegisterForm(forms.Form):
         if User.objects.filter(username=register_login).exists():
             raise forms.ValidationError("Tento název účtu již registrovaný je. Zadejte prosím jiný")
 
+        if (len(register_login) <= 5):
+            raise forms.ValidationError("Název účtu musí být delší 5 znaků")
+
         if (len(register_pass) <= 5):
             raise forms.ValidationError("Heslo musí být delší 5 znaků")
 
@@ -44,13 +47,11 @@ class UserLoginForm(forms.Form):
         login_pass = self.cleaned_data.get("login_pass")
         if login_name and login_pass:
             user = authenticate(username=login_name, password=login_pass)
-            if user is None:
-                raise forms.ValidationError("Název účtu neexistuje")
-            if not user.check_password(login_pass):
-                raise forms.ValidationError("Toto heslo je špatné")
+            if user is None or not user.check_password(login_pass):
+                raise forms.ValidationError("Heslo nebo název účtu je nesprávné")
 
             if not user.is_active:
-                raise forms.ValidationError("Není aktivní")
+                raise forms.ValidationError("Uživatel není aktivní")
 
         return super(UserLoginForm, self).clean(*args, **kwargs)
 
