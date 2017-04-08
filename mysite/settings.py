@@ -139,3 +139,16 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "mysite/main/publications/"
 STATICFILES_DIRS = [
     os.path.join(os.path.dirname(BASE_DIR), "mysite/main/publications/"),
 ]
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'lokishek007@gmail.com'
+EMAIL_HOST_PASSWORD = 'pajinka007'
+EMAIL_PORT = 587
+
+#Authentication backends
+AUTHENTICATION_BACKENDS = (
+        'django.contrib.auth.backends.ModelBackend',
+    )
