@@ -2,28 +2,44 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import UploadFileForm, PasswordSetting
-from django.shortcuts import get_object_or_404
+from .forms import UploadFileForm, PasswordSetting, UploadLinkForm, SearchForm
 from django.conf import settings
-from django.db import transaction
 from main.models import file_record
 import os
 from django.contrib.auth.models import User
+from django.db.models import Q
 
-from django.contrib.auth import (
-    authenticate,
-    get_user_model,
-    login,
-    logout
-)
-
-
-#@login_required
+@login_required
 def Main(request):
-    results = file_record.objects.all()
-    return render(request, 'main/file_list.html', {'results': results})
+    if request.method == 'POST':
+        form = SearchForm(request.POST, request.FILES)
+        if form.is_valid():
+            title = form.cleaned_data.get("title")
+            author = form.cleaned_data.get("author")
 
+            if title:
+                search = file_record.objects.filter(file_name__icontains=title, enable_post=True).order_by('owner').order_by('-date')
+            elif author:
+                id_user = User.objects.filter(Q(file_record__owner__last_name__icontains=author) |
+                                              Q(file_record__owner__first_name__icontains=author),
+                                                file_record__enable_post=True).\
+                    order_by('owner').order_by('-file_record__date')
 
+                search = file_record.objects.filter(enable_post=True, owner=id_user).order_by('owner').order_by('-date')
+
+            else:
+                search = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
+
+            results=search
+        else:
+            results = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
+    else:
+        form = SearchForm()
+        results = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
+
+    return render(request, 'main/file_list.html', {'results': results, 'form': form})
+
+@login_required
 def NewFile(request):
         if request.method == 'POST':
             form = UploadFileForm(request.POST, request.FILES)
@@ -37,7 +53,6 @@ def NewFile(request):
 
                 file_status = Handle_uploaded_file(request, request.FILES['file'], file_path, dir_path)
                 if file_status:
-                    Save_file_record(request, filename, file_path)
                     Save_file_record(request, filename, file_path, file_enabled)
                     return HttpResponseRedirect('/main/insert/successfully/')
                 else:
