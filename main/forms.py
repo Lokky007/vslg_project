@@ -4,14 +4,22 @@ from django import forms
 
 
 class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': "Metoda_ve_main_wievs"}),
-                            label='Jméno souboru')
-    file = forms.FileField(label='Cesta')
+    title = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': "title"}),
+                            label='Název souboru pro publikování na webu')
+    file = forms.FileField(label='Cesta k souboru')
+    status = forms.BooleanField(label="Po uložení ihned zveřejnit", initial=True)
 
     def clean(self):
         title = self.cleaned_data.get("title")
         file = self.cleaned_data.get("file")
 
+
+class SearchForm(forms.Form):
+    title = forms.CharField(max_length=50, label='', required=False,
+                            widget=forms.TextInput(attrs={'class': "file_list_name file_list_name_search"}))
+
+    author = forms.CharField(max_length=50, label='', required=False,
+                             widget=forms.TextInput(attrs={'class': "file_list_uploadedBy file_list_uploadedBy_search"}))
 
 class PasswordSetting(forms.Form):
 
@@ -34,3 +42,14 @@ class PasswordSetting(forms.Form):
             raise forms.ValidationError("Hesla nejsou stejná")
         if not self.user.check_password(original_password):
             raise forms.ValidationError("Původní heslo nesouhlasí")
+
+class UploadLinkForm(forms.Form):
+    title = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': "title"}),
+                            label='Název odkazu pro publikování na webu')
+    link = forms.CharField(label='Odkaz k publikaci')
+    status = forms.BooleanField(label="Po uložení ihned zveřejnit", initial=True)
+
+    def clean(self):
+        title = self.cleaned_data.get("title")
+        link = self.cleaned_data.get("link")
+

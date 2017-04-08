@@ -46,13 +46,43 @@ def NewFile(request):
             form = UploadFileForm()
         return render(request, 'main/insert_file.html', {'form': form})
 
-
+@login_required
 def Overview(request):
-    results = file_record.objects.filter(owner=request.user.id)
+    results = file_record.objects.filter(owner=request.user.id).order_by('-date')
     return render(request, 'main/overview.html', {'results': results})
 
+@login_required
+def NewLink(request):
+    if request.method == 'POST':
+        form = UploadLinkForm(request.POST)
+        if form.is_valid():
+
+            filename = form.cleaned_data.get("title")
+            link = form.cleaned_data.get("link")
+            status = form.cleaned_data.get("status")
+            user_id = User.objects.get(id=request.user.id)
+
+
+            try:
+                record = file_record(file_name=filename, owner=user_id, link=link, enable_post=status)
+                record.save()
+                return HttpResponseRedirect('/main/insert/successfully/')
+            except:
+                error = 'Evidence odkazu se nezdařila. Kontaktujte prosím administrátora'
+                return render(request, 'main/insert_file.html', {'form': form, 'error': error})
+
+        else:
+            error = 'Evidence odkazu se nezdařila. Kontaktujte prosím administrátora'
+            return render(request, 'main/insert_file.html', {'form': form, 'error': error})
+
+
+
+    else:
+        form = UploadLinkForm()
+    return render(request, 'main/insert_link.html', {'form': form})
 
 # Account settings
+@login_required
 def Settings(request):
 
     user = User.objects.get(username=request.user.username)
@@ -79,26 +109,64 @@ def Settings(request):
     return render(request, 'main/settings.html', {'form': form})
 
 
+
 # page only for visualisation of correct save
+@login_required
 def File_saved(request):
     return render(request, 'main/file_saved.html', {})
 
-
+@login_required
 def Delete_file(request, file_id, result=""):
 
     enabled_delete = file_record.objects.filter(owner=request.user.id, id=file_id).count()
     record = file_record.objects.get(id=file_id)
-    file_exist = os.path.isfile(record.path)
-    # if select found only one record for delete with condition id file and id user-> continue
-    if enabled_delete == 1 and file_exist:
-        os.remove(record.path)
+    print record.path
+    if record.path is not None:
+        file_exist = os.path.isfile(record.path)
+        # if select found only one record for delete with condition id file and id user-> continue
+        if enabled_delete == 1 and file_exist:
+            os.remove(record.path)
+            record.delete()
+            result = "Smazání záznamu proběhlo úspěšně."
+        else:
+            result = "Smazání záznamu se nezdařilo. Kontaktujte administrátora"
+    else:
         record.delete()
         result = "Smazání záznamu proběhlo úspěšně."
 
-    else:
-        result = "Smazání záznamu se nezdařilo. Kontaktujte administrátora"
-
     return render(request, 'main/delete.html', {'result': result})
+
+@login_required
+def Status_file(request, file_id, result=""):
+
+    new_status = True
+    enabled_change = file_record.objects.filter(owner=request.user.id, id=file_id).count()
+    record = file_record.objects.get(id=file_id)
+    if record.path is not None:
+        file_exist = os.path.isfile(record.path)
+        # if select found only one record for delete with condition id file and id user-> continue
+        if enabled_change == 1 and file_exist:
+            if record.enable_post:
+                new_status = False
+
+            record.enable_post = new_status
+            record.save()
+            result = "Stav byl úspěšně změněn."
+
+        else:
+            result = "Chyba při změně stavu souboru. Kontaktujte administrátora"
+    else:
+        if enabled_change == 1:
+            if record.enable_post:
+                new_status = False
+
+            record.enable_post = new_status
+            record.save()
+            result = "Stav byl úspěšně změněn."
+        else:
+            result = "Chyba při změně stavu souboru. Kontaktujte administrátora"
+
+    return redirect('/main/overview')
 
 
 #
@@ -120,8 +188,8 @@ def Handle_uploaded_file(request, file, file_path, dir_path):
         return False
 
 
-def Save_file_record(request, filename, file_path):
+def Save_file_record(request, filename, file_path, file_status):
     user_id = User.objects.get(id=request.user.id)
 
-    record = file_record(file_name=filename, owner=user_id, path=file_path)
+    record = file_record(file_name=filename, owner=user_id, path=file_path, enable_post=file_status)
     record.save()
