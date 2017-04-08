@@ -29,6 +29,7 @@ def NewFile(request):
             form = UploadFileForm(request.POST, request.FILES)
             if form.is_valid():
                 filename = form.cleaned_data.get("title")
+                file_enabled = form.cleaned_data.get("status")
 
                 username = request.user.username
                 dir_path = settings.MEDIA_ROOT + username + "/"
@@ -37,6 +38,7 @@ def NewFile(request):
                 file_status = Handle_uploaded_file(request, request.FILES['file'], file_path, dir_path)
                 if file_status:
                     Save_file_record(request, filename, file_path)
+                    Save_file_record(request, filename, file_path, file_enabled)
                     return HttpResponseRedirect('/main/insert/successfully/')
                 else:
                     error = 'Uložení souboru se nezdařilo. Kontaktujte prosím administrátora'
