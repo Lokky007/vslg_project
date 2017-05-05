@@ -17,11 +17,8 @@
 
     <div class="searchForm" style="display: none">
            <form class="form-search" action="" method="post"> {% csrf_token %}
-
                 {{ form }}
                 <input type="submit"  style="display: none" value="ok" />
-
-
             </form>
     </div>
 
@@ -31,9 +28,9 @@
             <div class="file_list_name">    {{ item.file_name }} </div>
 
             {% if item.path %}
-                <div class="file_list_download"><a href='{{ item.path }}' download="{{ item.file_name }}" >Dokument</a></div>
+                <div class="file_list_download"><a href='download/{{item.id}}' >Dokument</a></div>
             {% else %}
-                <div class="file_list_download"><a href='{{ item.link }}' target="_blank">Odkaz</a></div>
+                <div class="file_list_download"><a href='//{{ item.link }}' target="_blank">Odkaz</a></div>
             {% endif %}
 
             <div class="file_list_date">{{ item.date }}</div>

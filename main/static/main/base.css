@@ -68,7 +68,7 @@ body :-ms-input-placeholder {
 .loggedUser{
   padding: 10px 15px;
   padding-left: 5%;
-
+    color:white;
 }
 .container_second {
   padding-top:100px;
@@ -77,6 +77,13 @@ body :-ms-input-placeholder {
   padding: 15% 0;
   height: 400px;
   text-align: center;
+}
+
+.errors{
+    padding-bottom: 10px;
+    color: darkred;
+    font-weight: bold;
+    font-size: 20px;
 }
 .container_second h1 {
   font-size: 40px;
@@ -381,4 +388,13 @@ input[type=checkbox]
 .form-search{
     margin-bottom: 35px;
     padding: 5px 0;
+}
+
+.nav>li>a {
+    color:white;
+}
+.nav>li>a:focus,
+.nav>li>a:hover {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+
 }

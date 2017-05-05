@@ -14,12 +14,29 @@ class UploadFileForm(forms.Form):
         file = self.cleaned_data.get("file")
 
 
+
 class SearchForm(forms.Form):
     title = forms.CharField(max_length=50, label='', required=False,
-                            widget=forms.TextInput(attrs={'class': "file_list_name file_list_name_search"}))
+                            widget=forms.TextInput(
+                                attrs={
+                                    'class': "file_list_name file_list_name_search"
+                                }
+                            ))
 
     author = forms.CharField(max_length=50, label='', required=False,
-                             widget=forms.TextInput(attrs={'class': "file_list_uploadedBy file_list_uploadedBy_search"}))
+                             widget=forms.TextInput(
+                                 attrs={
+                                     'class': "file_list_uploadedBy "
+                                              "file_list_uploadedBy_search"
+                                 }
+                             ))
+
+class EmailUpdate(forms.Form):
+    email = forms.CharField(label='Emailová adresa', max_length=40)
+
+    def clean(self):
+        email = self.cleaned_data.get("email")
+
 
 class PasswordSetting(forms.Form):
 
@@ -53,3 +70,11 @@ class UploadLinkForm(forms.Form):
         title = self.cleaned_data.get("title")
         link = self.cleaned_data.get("link")
 
+class EditFile(forms.Form):
+    title = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': "title"}),
+                            label='Název souboru pro publikování na webu')
+    status = forms.BooleanField(label="Po uložení ihned zveřejnit", initial=True)
+
+
+    def clean(self):
+        title = self.cleaned_data.get("title")

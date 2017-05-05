@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import UploadFileForm, PasswordSetting, UploadLinkForm, SearchForm
+from .forms import UploadFileForm, PasswordSetting, UploadLinkForm, SearchForm, EditFile, EmailUpdate
 from django.conf import settings
 from main.models import file_record
 import os
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils.encoding import smart_str
+from django.http import HttpResponse
+
+from django.views.static import serve
 
 @login_required
 def Main(request):
@@ -18,19 +22,22 @@ def Main(request):
             author = form.cleaned_data.get("author")
 
             if title:
-                search = file_record.objects.filter(file_name__icontains=title, enable_post=True).order_by('owner').order_by('-date')
+                search = file_record.objects.filter(file_name__icontains=title, enable_post=True)\
+                    .order_by('owner').order_by('-date')
             elif author:
                 id_user = User.objects.filter(Q(file_record__owner__last_name__icontains=author) |
                                               Q(file_record__owner__first_name__icontains=author),
-                                                file_record__enable_post=True).\
-                    order_by('owner').order_by('-file_record__date')
+                                              file_record__enable_post=True).order_by('owner').\
+                    order_by('-file_record__date')
 
-                search = file_record.objects.filter(enable_post=True, owner=id_user).order_by('owner').order_by('-date')
+                search = file_record.objects.filter(enable_post=True, owner=id_user).order_by('owner')\
+                    .order_by('-date')
 
             else:
-                search = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
+                search = file_record.objects.filter(enable_post=True).order_by('owner')\
+                    .order_by('-date')
 
-            results=search
+            results = search
         else:
             results = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
     else:
@@ -38,6 +45,14 @@ def Main(request):
         results = file_record.objects.filter(enable_post=True).order_by('owner').order_by('-date')
 
     return render(request, 'main/file_list.html', {'results': results, 'form': form})
+
+@login_required
+def Download_file(request, file_id):
+
+    file = file_record.objects.get(id=file_id)
+    filepath = file.path
+    return serve(request, os.path.basename(filepath), os.path.dirname(filepath))
+
 
 @login_required
 def NewFile(request):
@@ -64,9 +79,12 @@ def NewFile(request):
         return render(request, 'main/insert_file.html', {'form': form})
 
 @login_required
-def Overview(request):
+def Overview(request, error=''):
     results = file_record.objects.filter(owner=request.user.id).order_by('-date')
-    return render(request, 'main/overview.html', {'results': results})
+    success = request.GET.get('success', 1)
+    if success == '0':
+        error = 'Operace se nezdařila. Opakujte akci nebo kontaktujte administrátora'
+    return render(request, 'main/overview.html', {'results': results, 'error': error})
 
 @login_required
 def NewLink(request):
@@ -123,8 +141,58 @@ def Settings(request):
     else:
         form = PasswordSetting(user=user)
 
-    return render(request, 'main/settings.html', {'form': form})
+        data = {'email': request.user.email}
+        form_email = EmailUpdate(initial=data)
 
+    return render(request, 'main/settings.html', {'form': form, 'form_email': form_email})
+
+# Update File
+@login_required
+def Update_file(request, file_id):
+    record = file_record.objects.get(id=file_id)
+
+    if request.method == 'POST':
+
+        # recognize type of form form update (3 elements for file)
+        if len(request.POST) != 3:
+            link_form = UploadLinkForm(request.POST)
+            if link_form.is_valid():
+
+                link_href = link_form.cleaned_data.get("link")
+                title_href = link_form.cleaned_data.get("title")
+                status_href = link_form.cleaned_data.get("status")
+
+                print link_href, title_href, status_href
+
+                record.file_name = title_href
+                record.link = link_href
+                record.enable_post = status_href
+                record.save()
+        else:
+            file_form = EditFile(request.POST)
+            if file_form.is_valid():
+
+                title = file_form.cleaned_data.get("title")
+                status = file_form.cleaned_data.get("status")
+
+                record.file_name = title
+                record.enable_post = status
+                record.save()
+
+        return redirect('/main/overview')
+
+    else:
+        if record.path is not None:
+            data = {'title': record.file_name, 'enable_post': record.enable_post}
+            form = EditFile(initial=data)
+
+            return render(request, 'main/insert_file.html', {'form': form})
+
+        else:
+
+            data = {'title': record.file_name, 'link': record.link, 'status': record.enable_post}
+            form = UploadLinkForm(initial=data)
+            return render(request, 'main/update_record.html', {'form': form})
 
 
 # page only for visualisation of correct save
@@ -137,7 +205,6 @@ def Delete_file(request, file_id, result=""):
 
     enabled_delete = file_record.objects.filter(owner=request.user.id, id=file_id).count()
     record = file_record.objects.get(id=file_id)
-    print record.path
     if record.path is not None:
         file_exist = os.path.isfile(record.path)
         # if select found only one record for delete with condition id file and id user-> continue
@@ -154,7 +221,7 @@ def Delete_file(request, file_id, result=""):
     return render(request, 'main/delete.html', {'result': result})
 
 @login_required
-def Status_file(request, file_id, result=""):
+def Status_file(request, file_id, result=1):
 
     new_status = True
     enabled_change = file_record.objects.filter(owner=request.user.id, id=file_id).count()
@@ -168,10 +235,9 @@ def Status_file(request, file_id, result=""):
 
             record.enable_post = new_status
             record.save()
-            result = "Stav byl úspěšně změněn."
 
         else:
-            result = "Chyba při změně stavu souboru. Kontaktujte administrátora"
+            result = 0
     else:
         if enabled_change == 1:
             if record.enable_post:
@@ -179,11 +245,10 @@ def Status_file(request, file_id, result=""):
 
             record.enable_post = new_status
             record.save()
-            result = "Stav byl úspěšně změněn."
         else:
-            result = "Chyba při změně stavu souboru. Kontaktujte administrátora"
+            result = 0
 
-    return redirect('/main/overview')
+    return redirect('/main/overview/?success=%d' % result)
 
 
 #

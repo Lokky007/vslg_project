@@ -20,5 +20,17 @@
 
     </form>
 
+    <r>
+
+    <div class="file_list_labels">Úprava emailové adresy</div>
+
+     <form class="form" action="" method="post"> {% csrf_token %}
+
+        {{ form_email.as_p }}
+
+         <input type="submit" value="Uložit" />
+
+    </form>
+
 
 {% endblock %}

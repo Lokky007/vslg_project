@@ -2,7 +2,10 @@
 {% extends "base.html" %}
 {% block title %}Moje publikace{% endblock %}
 {% block head %}Moje publikace{% endblock %}
+
 {% block content %}
+<div class="errors"> {{ error }} </div>
+
 
    {% for item in results %}
         <div class="file_row">
@@ -21,7 +24,7 @@
 
            <div class="overview_buttons">
             <input type="submit" class="changeButton" onclick="confirmChangeStatus('/main/overview/changeStatus/{{ item.id }}')" value="Změnit stav" />
-            <input type="submit" class="editButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Upravit" />
+            <input type="submit" class="editButton" onclick="window.location='/main/overview/update/{{ item.id }}';" value="Upravit" />
             <input type="submit" class="deleteButton" onclick="confirmDelete('/main/overview/delete/{{ item.id }}')" value="Smazat" />
            </div>
         </div>
