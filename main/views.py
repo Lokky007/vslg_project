@@ -83,7 +83,7 @@ def Overview(request, error=''):
     results = file_record.objects.filter(owner=request.user.id).order_by('-date')
     success = request.GET.get('success', 1)
     if success == '0':
-        error = 'Operace se nezdařila. Opakujte akci nebo kontaktujte administrátora'
+        error = 'Operace se nezdařila. Opakujte akci nebo kontaktujte administrátora.'
     return render(request, 'main/overview.html', {'results': results, 'error': error})
 
 @login_required
